@@ -45,7 +45,6 @@ led_config_t g_led_config = {
         2, 2, 2, 2, 2, 2, 2, 2, 2,
     }
 };
-#endif
 
 #ifdef RGB_DISABLE_WHEN_USB_SUSPENDED
 void suspend_power_down_kb(void) {
@@ -57,6 +56,7 @@ void suspend_wakeup_init_kb(void) {
     rgb_matrix_set_suspend_state(false);
     suspend_wakeup_init_user();
 }
+#endif
 #endif
 
 #ifdef OLED_ENABLE
@@ -74,11 +74,9 @@ void matrix_init_kb(void) {
 void rgb_matrix_indicators_kb(void) {
     HSV hsv = {0, 255, rgb_matrix_get_val()};
     RGB rgb = hsv_to_rgb(hsv);
-// caps_lock indicator
     if (host_keyboard_led_state().caps_lock) {
         rgb_matrix_set_color(56, rgb.r, rgb.g, rgb.b);
     }
-//  layers indicators
     switch(biton32(layer_state)) {
         case 1: rgb_matrix_set_color(12, rgb.r, rgb.g, rgb.b); break;
         case 2: rgb_matrix_set_color(11, rgb.r, rgb.g, rgb.b); break;
@@ -96,29 +94,6 @@ void rgb_matrix_indicators_kb(void) {
     }
 }
 
-#if defined ENCODER_ENABLE && defined ENCODER_TRIGGER_ENABLE
-bool encoder_update_kb(uint8_t index, bool clockwise) {
-    if (clockwise) {
-		encoder_trigger_kb(
-#ifdef VIA_ENABLE
-            dynamic_keymap_get_keycode(biton32(layer_state), 3, 14),
-#else
-            1,
-#endif
-            (keypos_t){.row = 3, .col = 14});
-    } else {
-		encoder_trigger_kb(
-#ifdef VIA_ENABLE
-            dynamic_keymap_get_keycode(biton32(layer_state), 3, 13),
-#else
-            1,
-#endif
-            (keypos_t){.row = 3, .col = 13});
-	}
-	return true;
-}
-#endif
-
 #ifdef OLED_ENABLE
 void CatToggle(void) {
     anime_cleared = true;
@@ -129,37 +104,6 @@ void CatToggle(void) {
 
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
     switch(keycode) {
-#ifdef ALT_TAB_MARCO_ENABLE
-        case ATR:
-            if (record->event.pressed) {
-                alt_tab_reverse();
-            }
-            return false;
-        case ATF:
-            if (record->event.pressed) {
-                alt_tab_forward();
-            }
-            return false;
-#endif
-#ifdef RGB_MATRIX_CONTROL_ENABLE
-        case UGLRGBTog:
-            if (record->event.pressed) {
-                underglow_rgb_toggle();
-            }
-            return false;
-        case KBLRGBTog:
-            if (record->event.pressed) {
-                key_backlight_rgb_toggle();
-            }
-            return false;
-#endif
-#ifdef UNDERGLOW_RGB_MATRIX_ENABLE
-        case UGLFIXEDRGBMODF:
-            if (record->event.pressed) {
-               underglow_rgb_mode_step();
-            }
-            return false;
-#endif
 #ifdef OLED_ENABLE
         case CATTOG:
 			if (record->event.pressed) {

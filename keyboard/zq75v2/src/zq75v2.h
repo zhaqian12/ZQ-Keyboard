@@ -35,25 +35,9 @@
 }
 
 
-//custom keycodes
 enum custom_keycodes {
-#ifdef ALT_TAB_MARCO_ENABLE
-#ifdef VIA_ENABLE
-    ATR = USER00,			//alt_shift_tab
-#else
-    ATR = SAFE_RANGE,		//alt_shift_tab
-#endif
-    ATF,					//alt_tab
-#endif
-#ifdef RGB_MATRIX_CONTROL_ENABLE
-	UGLRGBTog,				//rgb toggle for underglow rgb light
-	KBLRGBTog,				//rgb toggle for key rgb backlight
-#endif
-#ifdef UNDERGLOW_RGB_MATRIX_ENABLE
-	UGLFIXEDRGBMODF,		//underglow light fixed and only changes rgb effects of backlight
-#endif
 #ifdef OLED_ENABLE
-	CATTOG,					//cat animation toggle
+	CATTOG = NEW_USER,
 #endif
 };
 

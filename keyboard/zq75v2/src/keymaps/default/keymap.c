@@ -15,13 +15,13 @@
  */
 
 #include "zq75v2.h"
-#ifdef OLED_DRIVER_ENABLE
+#ifdef OLED_ENABLE
 #include "render_anime.c"
 #endif
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef OLED_DRIVER_ENABLE
+#ifdef OLED_ENABLE
 static uint32_t oled_timer = 0;
 bool master_oled_cleared = false;
 extern bool anime_cleared;
@@ -46,10 +46,10 @@ const uint32_t PROGMEM unicode_map[] = {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 	LAYOUT(
-		KC_ESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_DEL, KC_MUTE,
+		KC_ESC, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5, KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12, KC_DEL, RADIAL_BUTTON,
 		KC_GRV, KC_1, KC_2, KC_3, KC_4, KC_5, KC_6, KC_7, KC_8, KC_9, KC_0, KC_MINS, KC_EQL, KC_BSPC, KC_PGUP,
 		KC_TAB, KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_LBRC, KC_RBRC, KC_BSLS, KC_PGDN,
-		KC_CAPS, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_ENT, KC_VOLD, KC_VOLU,
+		KC_CAPS, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, KC_ENT, RADIAL_LEFT, RADIAL_RIGHT,
 		KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, KC_UP,
 		KC_LCTL, KC_LGUI, KC_LALT, KC_SPC, KC_SPC, KC_SPC, MO(1), KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT),
 
@@ -59,8 +59,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 		KC_TRNS, RGB_TOG, RGB_MOD, RGB_RMOD, RGB_VAI, RGB_VAD, RGB_HUI, RGB_HUD, RGB_SAI, RGB_SAD, RGB_SPI, RGB_SPD, KC_TRNS, KC_TRNS, KC_VOLD,
 		KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, RGB_VAD, RGB_VAI,
 #if defined RGB_MATRIX_CONTROL_ENABLE && defined UNDERGLOW_RGB_MATRIX_ENABLE
-		KC_TRNS, X(BANG), X(IRONY), X(SNEK), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KBLRGBTog,
-		KC_TRNS, KC_TRNS, VLK_TOG, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, UGLFIXEDRGBMODF, UGLRGBTog , KC_LOCK),
+		KC_TRNS, X(BANG), X(IRONY), X(SNEK), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, K_R_T,
+		KC_TRNS, KC_TRNS, VLK_TOG, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, UG_R_MF, UG_R_T , UG_R_MR),
 #else
         KC_TRNS, X(BANG), X(IRONY), X(SNEK), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,
 		KC_TRNS, KC_TRNS, VLK_TOG, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_LOCK),
@@ -179,29 +179,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 };
 
-#ifdef OLED_DRIVER_ENABLE
+#ifdef OLED_ENABLE
 char wpm_str[10];
 
-// WPM-responsive animation stuff here
 #define IDLE_FRAMES 5
-#define IDLE_SPEED 20 // below this wpm value your animation will idle
-
-// #define PREP_FRAMES 1 // uncomment if >1
+#define IDLE_SPEED 20
 
 #define TAP_FRAMES 2
-#define TAP_SPEED 30 // above this wpm value typing animation to triggere
+#define TAP_SPEED 30
 
-#define ANIM_FRAME_DURATION 200 // how long each frame lasts in ms
-// #define SLEEP_TIMER 60000 // should sleep after this period of 0 wpm, needs fixing
-#define ANIM_SIZE 636 // number of bytes in array, minimize for adequate firmware size, max is 1024
+#define ANIM_FRAME_DURATION 200
+#define ANIM_SIZE 636
 
 uint32_t anim_timer = 0;
 uint32_t anim_sleep = 0;
 uint8_t current_idle_frame = 0;
-// uint8_t current_prep_frame = 0; // uncomment if PREP_FRAMES >1
 uint8_t current_tap_frame = 0;
 
-// Images credit j-inc(/James Incandenza) and pixelbenny. Credit to obosob for initial animation approach.
 static void render_anim(void) {
     static const char PROGMEM idle[IDLE_FRAMES][ANIM_SIZE] = {
         {
@@ -266,15 +260,13 @@ static void render_anim(void) {
         },
     };
 
-    //assumes 1 frame prep stage
     void animation_phase(void) {
         if(get_current_wpm() <=IDLE_SPEED){
             current_idle_frame = (current_idle_frame + 1) % IDLE_FRAMES;
             oled_write_raw_P(idle[abs((IDLE_FRAMES-1)-current_idle_frame)], ANIM_SIZE);
          }
-         if(get_current_wpm() >IDLE_SPEED && get_current_wpm() <TAP_SPEED){
-             // oled_write_raw_P(prep[abs((PREP_FRAMES-1)-current_prep_frame)], ANIM_SIZE); // uncomment if IDLE_FRAMES >1
-             oled_write_raw_P(prep[0], ANIM_SIZE);  // remove if IDLE_FRAMES >1
+         if(get_current_wpm() >IDLE_SPEED && get_current_wpm() <TAP_SPEED) {
+             oled_write_raw_P(prep[0], ANIM_SIZE);
          }
          if(get_current_wpm() >=TAP_SPEED){
              current_tap_frame = (current_tap_frame + 1) % TAP_FRAMES;
@@ -282,7 +274,7 @@ static void render_anim(void) {
          }
     }
     if(get_current_wpm() != 000) {
-        oled_on(); // not essential but turns on animation OLED with any alpha keypress
+        oled_on();
         if(timer_elapsed32(anim_timer) > ANIM_FRAME_DURATION) {
             anim_timer = timer_read32();
             animation_phase();
@@ -300,27 +292,27 @@ static void render_anim(void) {
     }
 }
 
-    static const char PROGMEM oled_header[] = {
+static const char PROGMEM oled_header[] = {
     0x80,0x81,0x82,0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8a,0x8b,0x8c,0x8d,0x8e,0x8f,0x90,0x91,0x92,0x93,0x94,
     0xa0,0xa1,0xa2,0xa3,0xa4,0xa5,0xa6,0xa7,0xa8,0xa9,0xaa,0xab,0xac,0xad,0xae,0xaf,0xb0,0xb1,0xb2,0xb3,0xb4,
 	0xc0,0};
 
-	static const char PROGMEM oled_layer_keylog_separator[] = {
+static const char PROGMEM oled_layer_keylog_separator[] = {
     0xc8,0xff,0};
 
-	static const char PROGMEM oled_layer_line_end[] = {
+static const char PROGMEM oled_layer_line_end[] = {
     0xd4,0};
 
-	static const char PROGMEM oled_layer_keylog_bottom[] = {
+static const char PROGMEM oled_layer_keylog_bottom[] = {
     0xc1,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc3,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc2,0};
 
-	static const char PROGMEM oled_line_start[] = {
+static const char PROGMEM oled_line_start[] = {
     0xc0,0};
 
-	static const char PROGMEM oled_mods_bottom[] = {
+static const char PROGMEM oled_mods_bottom[] = {
     0xc1,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc7,0xc2,0};
 
-	static const char PROGMEM oled_footer[] = {
+static const char PROGMEM oled_footer[] = {
     0xc4,0xc5,0xc5,0xc9,0xca,0xca,0xca,0xca,0xca,0xca,0xca,0xca,0xca,0xca,0xca,0xca,0xca,0xcb,0xc5,0xc5,0xc6,0};
 
 
@@ -474,7 +466,7 @@ void render_keylock_status(uint8_t led_usb_state) {
 	oled_write_P(PSTR(" "), false);
 }
 
-void oled_task_user(void) {
+bool oled_task_user(void) {
     if (timer_elapsed32(oled_timer) > OLED_SHOW_STATE_TIMEOUT && timer_elapsed32(oled_timer) < OLED_TIMEOUT) {
         if (!master_oled_cleared) {
             oled_clear();
@@ -530,13 +522,14 @@ void oled_task_user(void) {
             oled_write_P(oled_footer, false);
         }
     }
+    return true;
 }
 
 #endif
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
-#ifdef OLED_DRIVER_ENABLE
+#ifdef OLED_ENABLE
         oled_timer = timer_read32();
         add_keylog(keycode);
 #endif
