@@ -24,4 +24,4 @@ ZQ Keyboard Repository
 - firmware flash instruction
 - via/vial instruction
 - custom keycode instruction
-- openrgb instruction
+- [openrgb instruction](./software/openrgb/openrgb.md)
