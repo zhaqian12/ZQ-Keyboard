@@ -8,6 +8,8 @@ ZQ Keyboard Repository
 | comb67        | 0x00AA    | 0xAA02     | Atmel atmega32u4  | RGB, UGRGB        |
 | zq80          | 0x00AA    | 0xAA05     | Atmel atmega32u4  | RGB, UGRGB, LOGORGB                          |
 | zq48          | 0x00AA    | 0xAA07     | Atmel atmega32u4  | RGB, UGRGB                                   |
+| zq46          | 0x00AA    | 0xAA11     | ST stm32f401  | RGB, UGRGB, ENCODER |
+| zq50          | 0x00AA    | 0xAA16     | ZKICME cks32f103  | RGB, UGRGB, ENCODER |
 | Mpad12        | 0x00AA    | 0xAAAA     | Atmel atmega32u4  | RGB, UGRGB, JOYSTICK, ENCODER, OLED          |
 
 ### Keyboard Folder Structure
