@@ -10,6 +10,58 @@
       "rows": 4,
       "cols": 14
     },
+    "customKeycodes": [
+      {
+        "name": "Radial\nButton",
+        "title": "Radial Controller Button in Windows 10",
+        "shortName": "Radial\nButton"
+      },
+      {
+        "name": "Radial\nLeft",
+        "title": "Radial Controller Counter Clockwise in Windows 10",
+        "shortName": "Radial\nLeft"
+      },
+      {
+        "name": "Radial\nRight",
+        "title": "Radial Controller Clockwise in Windows 10",
+        "shortName": "Radial\nRight"
+      },
+      {
+        "name": "Radial\nLeft\nHold",
+        "title": "Radial Controller Continue Counter Clockwise in Windows 10",
+        "shortName": "Radial\nLeftC"
+      },
+      {
+        "name": "Radial\nRight\nHold",
+        "title": "Radial Controller Continue Clockwise in Windows 10",
+        "shortName": "Radial\nRightC"
+      },
+      {
+        "name": "Underglow\nRGB\nToggle",
+        "title": "Underglow RGB Toggle",
+        "shortName": "UGRGB Tog"
+      },
+      {
+        "name": "Key\nRGB\nToggle",
+        "title": "Key RGB Toggle",
+        "shortName": "KeyRGB Tog"
+      },
+      {
+        "name": "Underglow\nRGB\nMode\nSync",
+        "title": "Underglow RGB Mode Sync With Key RGB Mode",
+        "shortName": "UGRGB MODS"
+      },
+      {
+        "name": "Underglow\nRGB\nMode+",
+        "title": "Underglow RGB Mode Step",
+        "shortName": "UGRGB MOD+"
+      },
+      {
+        "name": "Underglow\nRGB\nMode-",
+        "title": "Underglow RGB Mode Step Reverse",
+        "shortName": "UGRGB MOD-"
+      }
+    ],
     "layouts": {
       "labels": [
         ["Encoder","CLOSE","OPEN"]
