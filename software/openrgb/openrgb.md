@@ -44,6 +44,12 @@
   自己需要的插件.
   
   添加插件步骤如下所示:
+
+  1.解压仓库中的OpenRGB Plugins Windows 64-bit.zip压缩包
+	
+  2.运行Install Plugins.bat 自动添加
+
+  或手动添加插件,步骤如下所示:
   
   1.打开OpenRGB
   
